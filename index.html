@@ -9,18 +9,18 @@
 <meta property="og:description" content="Textile · Print · Surface — Textile design portfolio 2026">
 <meta property="og:image" content="og.jpg">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#2f6e70">
+<meta name="theme-color" content="#efe8d8">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" as="image" href="img/01.webp" imagesrcset="img/01.webp 2400w, img/xl/01.webp 4200w" imagesizes="(max-aspect-ratio: 1/1) 283vh, 100vw">
+<link rel="preload" as="image" href="img/01.webp" imagesrcset="img/01.webp 2400w, img/xl/01.webp 4200w" imagesizes="(max-aspect-ratio: 1/1) 260vh, 92vw">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Jost:wght@400;500&display=swap">
 <script>document.documentElement.classList.add("js")</script>
 <style>
 /* =========================================================
-   v2 — the Canva pages stacked edge to edge.
-   Floating controls use mix-blend-mode: difference so they
-   read on both the cream and the teal pages.
+   The 45 Canva pages as cards on a cream table, with motion.
+   Rule for every animation here: a page is NEVER hidden and
+   its image is NEVER held back — motion only moves/scales it.
    ========================================================= */
 :root{
   --bg:#efe8d8; --ink:#1f2b2a; --muted:#6b726f;
@@ -30,6 +30,8 @@
   --font-ui:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
   --ease:cubic-bezier(.22,1,.36,1);
   --pad:max(20px,env(safe-area-inset-left,0px));
+  --gx:clamp(16px,4.5vw,76px);      /* space left/right of the pages */
+  --gap:clamp(22px,3.4vw,56px);     /* space between pages */
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -39,43 +41,72 @@ button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid currentColor;outline-offset:3px}
 .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* ---------- pages ---------- */
+/* ---------- pages (cards) ---------- */
+#stack{width:min(100%,calc((100vh - 170px) * 7015 / 2480 + 2 * var(--gx)));margin:0 auto;
+  padding:clamp(76px,9vh,96px) var(--gx) 0;display:flex;flex-direction:column;gap:var(--gap)}
 .pg{position:relative;margin:0;line-height:0}
-.frame{position:relative;width:100%;aspect-ratio:7015/2480;overflow:hidden;contain:paint;background:var(--bg)}
-.frame img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;max-width:none;
+.frame{position:relative;width:100%;aspect-ratio:7015/2480;overflow:hidden;border-radius:6px;background:#e4dccb;
+  box-shadow:0 1px 0 rgba(31,43,42,.06),0 34px 60px -42px rgba(31,43,42,.55);transform-origin:50% 50%;will-change:transform}
+.art{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
+.art img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;max-width:none;
   user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none;color:transparent}
 .hot{position:absolute;z-index:2;display:block;border-radius:6px}
-.hot::after{content:"";position:absolute;left:0;right:0;bottom:4%;height:2px;background:currentColor;color:var(--cream);
-  transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);mix-blend-mode:difference}
+.hot::after{content:"";position:absolute;left:0;right:0;bottom:4%;height:2px;background:var(--cream);
+  transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease)}
 .hot:hover::after,.hot:focus-visible::after{transform:scaleX(1)}
+/* thank-you page: the contact lines underline themselves one after another */
+#p45.finale .hot::after{transform:scaleX(1)}
+#p45 .hot:nth-of-type(1)::after{transition-delay:.35s}
+#p45 .hot:nth-of-type(2)::after{transition-delay:.8s}
+#p45.finale .hot:hover::after{transition-delay:0s}
 
-/* phones and tablets held upright: each page fills the screen height, swipe sideways to read */
+/* end of the stack: back to top */
+.end{display:flex;justify-content:center;padding:clamp(44px,7vh,80px) 0 clamp(90px,14vh,140px)}
+#totop{appearance:none;background:none;border:1.5px solid var(--ink);border-radius:999px;padding:14px 26px;display:flex;align-items:center;gap:10px;
+  font:500 12px/1 var(--font-ui);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;
+  opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease) .5s,transform 1s var(--ease) .5s,background .3s,color .3s}
+#totop.show{opacity:1;transform:none}
+#totop:hover{background:var(--ink);color:var(--bg)}
+#totop svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;transition:transform .5s var(--ease)}
+#totop:hover svg{transform:translateY(-3px)}
+
+/* phones and tablets held upright: each page is a full-height card — swipe sideways to read it */
 html.portrait{scroll-snap-type:y mandatory}
-.portrait .pg{height:100vh;height:100dvh;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
-  scrollbar-width:none;scroll-snap-align:start;overscroll-behavior-x:contain}
+.portrait #stack{width:auto;padding:0;gap:0;display:block}
+.portrait .pg{height:100vh;height:100dvh;display:flex;align-items:center;overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-align:start;overscroll-behavior-x:contain;padding:8px 0 0 14px}
 .portrait .pg::-webkit-scrollbar{display:none}
-.portrait .frame{height:100%;width:auto;aspect-ratio:7015/2480}
+.portrait .pg::after{content:"";flex:0 0 14px;height:1px}
+.portrait .frame{flex:0 0 auto;width:auto;height:calc(100dvh - 150px);height:calc(100vh - 150px);aspect-ratio:7015/2480}
+@supports (height:100dvh){.portrait .frame{height:calc(100dvh - 150px)}}
+.portrait .end{height:60vh;align-items:center;scroll-snap-align:end;padding:0}
 
-/* ---------- loader ---------- */
-#loader{position:fixed;inset:0;z-index:300;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;justify-content:space-between;
-  padding:calc(22px + env(safe-area-inset-top,0px)) var(--pad) calc(24px + env(safe-area-inset-bottom,0px));
-  transition:clip-path 1.1s var(--ease)}
-#loader.out{clip-path:inset(0 0 100% 0)}
+/* ---------- loader: name writes itself, then the screen splits open ---------- */
+#loader{position:fixed;inset:0;z-index:300;color:var(--ink)}
+.l-half{position:absolute;left:0;right:0;height:50.5%;background:var(--bg);transition:transform 1.15s cubic-bezier(.77,0,.18,1) .15s}
+.l-half.top{top:0}.l-half.bot{bottom:0}
+#loader.out .l-half.top{transform:translateY(-101%)}
+#loader.out .l-half.bot{transform:translateY(101%)}
+#loader.out{pointer-events:none}
+.l-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;
+  padding:calc(22px + env(safe-area-inset-top,0px)) var(--pad) calc(24px + env(safe-area-inset-bottom,0px));transition:opacity .45s,transform .7s var(--ease)}
+#loader.out .l-content{opacity:0;transform:scale(.97)}
 .l-top,.l-bot{display:flex;justify-content:space-between;gap:16px}
 .l-top{font:500 12px/1.4 var(--font-ui);letter-spacing:.14em;text-transform:uppercase}
 .l-top .acc{color:var(--teal)}
 .l-bot{align-items:flex-end;flex-wrap:wrap}
-.l-name{margin:0;font:400 clamp(52px,11vw,190px)/1 var(--font-display);letter-spacing:.01em}
-.l-name span{display:inline-block;transform:translateY(105%);animation:up 1.2s var(--ease) .1s forwards}
-.l-mask{overflow:hidden;display:block;padding:.04em 0 .12em}
-@keyframes up{to{transform:none}}
+.l-name{margin:0;font:400 clamp(52px,11vw,190px)/1 var(--font-display);letter-spacing:.01em;opacity:0}
+.l-name.split{opacity:1}
+.l-name .c{display:inline-block;opacity:0;transform:translateY(45%) rotate(5deg);filter:blur(6px);
+  animation:letter .95s var(--ease) forwards;animation-delay:calc(var(--i) * 55ms + 120ms)}
+@keyframes letter{to{opacity:1;transform:none;filter:blur(0)}}
 .l-side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .l-count{font:400 clamp(40px,7vw,110px)/.9 var(--font-display);font-variant-numeric:tabular-nums}
 .l-note{font:500 12px/1.5 var(--font-ui);color:var(--muted);max-width:26ch;text-align:right}
 .l-line{position:absolute;left:0;bottom:0;height:3px;background:var(--teal);width:0;transition:width .4s var(--ease)}
 
 /* ---------- floating chrome ---------- */
-.chrome,.chrome-b,.rail,#bar,.hint{mix-blend-mode:difference;color:var(--chrome)}
+.chrome,.chrome-b,.rail,#bar,.hint,#chflash{mix-blend-mode:difference;color:var(--chrome)}
 .chrome{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:flex-start;
   padding:calc(18px + env(safe-area-inset-top,0px)) var(--pad) 0;pointer-events:none}
 .chrome>*,.chrome-b>*{pointer-events:auto}
@@ -88,7 +119,6 @@ html.portrait{scroll-snap-type:y mandatory}
 .dots{display:grid;grid-template-columns:repeat(2,5px);gap:3px;transition:transform .6s var(--ease)}
 .dots i{width:5px;height:5px;background:currentColor;border-radius:50%}
 .ibtn:hover .dots{transform:rotate(90deg)}
-
 .chrome-b{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;
   padding:0 var(--pad) calc(18px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .pgmeta{display:flex;align-items:baseline;gap:16px;min-width:0}
@@ -109,6 +139,16 @@ html.portrait{scroll-snap-type:y mandatory}
 .hint b{display:block;width:1px;height:34px;background:currentColor;transform-origin:top;animation:drip 2s var(--ease) infinite}
 @keyframes drip{0%{transform:scaleY(0)}55%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
 .hint.gone{opacity:0}
+
+/* project name flash — shows for a moment when you enter a new project */
+#chflash{position:fixed;inset:0;z-index:45;display:grid;place-content:center;text-align:center;pointer-events:none;opacity:0}
+#chflash .cf-num{display:block;font:500 12px/1 var(--font-ui);letter-spacing:.24em;margin-bottom:18px}
+#chflash h2{margin:0;font:400 clamp(56px,10vw,170px)/.9 var(--font-display);letter-spacing:.02em}
+#chflash p{margin:16px 0 0;font:500 13px/1.4 var(--font-ui);letter-spacing:.08em}
+#chflash.on{animation:cf 1.7s var(--ease) forwards}
+#chflash.on h2{animation:cft 1.7s var(--ease) forwards}
+@keyframes cf{0%{opacity:0}18%{opacity:1}68%{opacity:1}100%{opacity:0}}
+@keyframes cft{0%{letter-spacing:.3em;filter:blur(8px);transform:scale(1.06)}30%{letter-spacing:.02em;filter:blur(0);transform:none}100%{transform:scale(.98)}}
 
 /* page rail (desktop) */
 .rail{position:fixed;right:max(10px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;align-items:flex-end}
@@ -136,13 +176,15 @@ html.portrait{scroll-snap-type:y mandatory}
 .ix-close{appearance:none;background:none;border:1.5px solid currentColor;border-radius:999px;padding:11px 18px;
   font:500 12px/1 var(--font-ui);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .3s,color .3s}
 .ix-close:hover{background:var(--cream);color:var(--teal-deep)}
-.ix-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:28px 24px}
-.ix-item{appearance:none;background:none;border:0;padding:0;text-align:left;cursor:pointer;width:100%;display:flex;flex-direction:column;gap:12px;
-  opacity:.82;transition:opacity .3s,transform .6s var(--ease)}
-.ix-item:hover,.ix-item:focus-visible{opacity:1;transform:translateY(-4px)}
-.ix-thumb{display:block;aspect-ratio:19/10;overflow:hidden;background:#24494a}
-.ix-thumb img{width:100%;height:100%;display:block;object-fit:cover;object-position:var(--ox,100%) 50%;transition:transform .8s var(--ease)}
-.ix-item:hover .ix-thumb img{transform:scale(1.04)}
+.ix-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:30px 26px}
+.ix-item{appearance:none;background:none;border:0;padding:0;text-align:left;cursor:pointer;width:100%;display:flex;flex-direction:column;gap:12px}
+.ix-thumb{position:relative;display:block;aspect-ratio:19/10;overflow:hidden;border-radius:6px;background:#24494a;
+  transform:perspective(900px);transition:transform .7s var(--ease),box-shadow .7s var(--ease);will-change:transform}
+.ix-thumb.tilting{transition:transform .12s linear,box-shadow .4s var(--ease);box-shadow:0 30px 50px -28px rgba(0,0,0,.6)}
+.ix-thumb img{width:100%;height:100%;display:block;object-fit:cover;object-position:var(--ox,100%) 50%}
+.ix-thumb::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at var(--sx,50%) var(--sy,50%),rgba(255,255,255,.26),rgba(255,255,255,0) 55%);opacity:0;transition:opacity .4s}
+.ix-thumb.tilting::after{opacity:1}
 .ix-text{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:baseline}
 .ix-num{font:500 12px/1 var(--font-ui);letter-spacing:.08em;opacity:.6;font-variant-numeric:tabular-nums}
 .ix-title{font:400 clamp(28px,2.6vw,40px)/1 var(--font-display)}
@@ -150,24 +192,23 @@ html.portrait{scroll-snap-type:y mandatory}
 .ix-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(36px,5vw,64px);padding-top:28px;border-top:1px solid rgba(242,235,220,.16)}
 .ix-links a{color:inherit;text-decoration:none;border:1px solid rgba(242,235,220,.4);border-radius:999px;padding:10px 18px;font-size:14px;transition:background .25s,color .25s}
 .ix-links a:hover{background:var(--cream);color:var(--teal-deep)}
-.js .ix-item{opacity:0;transform:translateY(24px)}
-#ix.open .ix-item{opacity:.82;transform:none;transition:opacity .8s var(--ease) calc(.15s + var(--d,0s)),transform .9s var(--ease) calc(.15s + var(--d,0s))}
-#ix.open .ix-item:hover{opacity:1;transform:translateY(-4px);transition-delay:0s}
+.js .ix-list li{opacity:0;transform:translateY(26px)}
+#ix.open .ix-list li{opacity:1;transform:none;transition:opacity .8s var(--ease) calc(.15s + var(--d,0s)),transform .9s var(--ease) calc(.15s + var(--d,0s))}
 
 /* ---------- cursor + magnifier ---------- */
-.fine .pg,.fine .pg *{cursor:none}
+.fine,.fine *{cursor:none!important}
 #cdot,#cring,#loupe{position:fixed;left:0;top:0;pointer-events:none;opacity:0;will-change:transform}
-#cdot{width:8px;height:8px;border-radius:50%;background:#fff;mix-blend-mode:difference;z-index:400}
+#cdot{width:8px;height:8px;border-radius:50%;background:#fff;mix-blend-mode:difference;z-index:400;transition:opacity .25s}
 #cring{--rs:40px;width:var(--rs);height:var(--rs);border-radius:50%;border:1.5px solid #fff;mix-blend-mode:difference;z-index:399;
-  display:grid;place-items:center;transition:width .5s var(--ease),height .5s var(--ease),opacity .3s}
+  display:grid;place-items:center;transition:width .5s var(--ease),height .5s var(--ease),opacity .3s,border-radius .4s}
 #cring span{font:500 10px/1 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:#fff;opacity:0;transition:opacity .3s}
 #cring.lbl span{opacity:1}
 #cdot.on,#cring.on{opacity:1}
 #cring.hide{opacity:0!important}
-#loupe{--size:280px;width:var(--size);height:var(--size);border-radius:50%;z-index:398;background-color:var(--bg);background-repeat:no-repeat;
+#loupe{--size:290px;width:var(--size);height:var(--size);border-radius:50%;z-index:398;background-color:var(--bg);background-repeat:no-repeat;
   box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.12),0 28px 70px rgba(0,0,0,.42)}
-#loupe::after{content:attr(data-z);position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font:500 10px/1 var(--font-ui);letter-spacing:.12em;
-  color:#fff;background:rgba(0,0,0,.45);padding:4px 7px;border-radius:99px;opacity:0;transition:opacity .3s}
+#loupe::after{content:attr(data-z);position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font:500 10px/1 var(--font-ui);letter-spacing:.12em;
+  color:#fff;background:rgba(0,0,0,.5);padding:4px 8px;border-radius:99px;opacity:0;transition:opacity .3s}
 #loupe.zshow::after{opacity:1}
 .coarse #loupe{--size:200px}
 
@@ -179,28 +220,32 @@ html.portrait{scroll-snap-type:y mandatory}
 
 @media (max-width:760px){.tr{gap:16px}.ptt{display:none}.brand{font-size:21px}}
 @media (prefers-reduced-motion:reduce){
-  .hint b{animation:none}.l-name span{animation:none;transform:none}
-  #ix,#loader,.roll .r,.ix-item{transition:none!important}
+  .hint b,.l-name .c{animation:none!important;opacity:1;transform:none;filter:none}
+  #ix,.l-half,.l-content,.roll .r,.ix-list li,.ix-thumb,#totop,.hot::after{transition:none!important}
+  #chflash{display:none}
 }
 </style>
 </head>
 <body>
 
 <div id="loader" aria-hidden="true">
-  <div class="l-top"><span>Textile design portfolio 2026</span><span class="acc">Textile · Print · Surface</span></div>
-  <div class="l-bot">
-    <h2 class="l-name"><span class="l-mask"><span>Aastha Rajput</span></span></h2>
-    <div class="l-side"><div class="l-count" id="lcount">00</div><div class="l-note">45 pages, full width.<br>Click any page to magnify.</div></div>
+  <div class="l-half top"></div><div class="l-half bot"></div>
+  <div class="l-content">
+    <div class="l-top"><span>Textile design portfolio 2026</span><span class="acc">Textile · Print · Surface</span></div>
+    <div class="l-bot">
+      <h2 class="l-name" id="lname">Aastha Rajput</h2>
+      <div class="l-side"><div class="l-count" id="lcount">00</div><div class="l-note">45 pages.<br>Click any page to magnify.</div></div>
+    </div>
+    <div class="l-line" id="lline"></div>
   </div>
-  <div class="l-line" id="lline"></div>
 </div>
 
 <div id="bar"></div>
 <header class="chrome">
-  <a class="brand" href="#p1" data-go="1" data-cur="btn">Aastha Rajput</a>
+  <a class="brand" href="#p1" data-go="1" data-cur="btn" data-label="Top">Aastha Rajput</a>
   <div class="tr">
     <span class="count" aria-hidden="true"><b id="curn">01</b><i>/</i><span>45</span></span>
-    <button class="ibtn" id="ixBtn" type="button" aria-expanded="false" aria-controls="ix" data-cur="btn">Index <span class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+    <button class="ibtn" id="ixBtn" type="button" aria-expanded="false" aria-controls="ix" data-cur="btn" data-mag>Index <span class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
   </div>
 </header>
 
@@ -210,8 +255,8 @@ html.portrait{scroll-snap-type:y mandatory}
     <span class="roll ptt" id="pgTitle"><span class="r">Cover</span></span>
   </div>
   <div class="nav">
-    <button class="nb" id="prev" type="button" aria-label="Previous page" data-cur="btn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
-    <button class="nb" id="next" type="button" aria-label="Next page" data-cur="btn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+    <button class="nb" id="prev" type="button" aria-label="Previous page" data-cur="btn" data-mag><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
+    <button class="nb" id="next" type="button" aria-label="Next page" data-cur="btn" data-mag><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
   </div>
 </footer>
 
@@ -264,286 +309,288 @@ html.portrait{scroll-snap-type:y mandatory}
 </nav>
 
 <div class="hint" id="hint" aria-hidden="true">Scroll<b></b></div>
+<div id="chflash" aria-hidden="true"><span class="cf-num" id="cfNum"></span><h2 id="cfTitle"></h2><p id="cfSub"></p></div>
 
 <main id="stack">
   <h1 class="sr">Aastha Rajput — Textile design portfolio 2026</h1>
   <section class="pg ch-start" id="p1" data-i="1" data-x="0.6" aria-label="Page 1 of 45: Introduction, Cover">
-    <div class="frame">
-      <img src="img/01.webp" srcset="img/01.webp 2400w, img/xl/01.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="1" width="2400" height="849" alt="Introduction — Cover" fetchpriority="high" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/01.webp" srcset="img/01.webp 2400w, img/xl/01.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="1" width="2400" height="849" alt="Introduction — Cover" fetchpriority="high" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p2" data-i="2" data-x="0" aria-label="Page 2 of 45: Introduction, About Aastha">
-    <div class="frame">
-      <img src="img/02.webp" srcset="img/02.webp 2400w, img/xl/02.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="2" width="2400" height="849" alt="Introduction — About Aastha" decoding="async" draggable="false">
-      <a class="hot" href="https://www.linkedin.com/in/aastha-rajput-44491b2b2" target="_blank" rel="noopener" style="left:74.2%;top:93.6%;width:13.4%;height:5.0%" aria-label="LinkedIn" data-cur="link"></a>
-      <a class="hot" href="mailto:astha.rajput@nift.ac.in" data-copy="astha.rajput@nift.ac.in" style="left:88.4%;top:93.6%;width:10.0%;height:2.6%" aria-label="Email astha.rajput@nift.ac.in" data-cur="link"></a>
-      <a class="hot" href="mailto:aastharajput184@gmail.com" data-copy="aastharajput184@gmail.com" style="left:88.4%;top:96.2%;width:10.0%;height:2.6%" aria-label="Email aastharajput184@gmail.com" data-cur="link"></a>
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/02.webp" srcset="img/02.webp 2400w, img/xl/02.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="2" width="2400" height="849" alt="Introduction — About Aastha" decoding="async" draggable="false">
+      <a class="hot" href="https://www.linkedin.com/in/aastha-rajput-44491b2b2" target="_blank" rel="noopener" style="left:74.2%;top:93.6%;width:13.4%;height:5.0%" aria-label="LinkedIn" data-cur="link" data-label="Open"></a>
+      <a class="hot" href="mailto:astha.rajput@nift.ac.in" data-copy="astha.rajput@nift.ac.in" style="left:88.4%;top:93.6%;width:10.0%;height:2.6%" aria-label="Email astha.rajput@nift.ac.in" data-cur="link" data-label="Copy"></a>
+      <a class="hot" href="mailto:aastharajput184@gmail.com" data-copy="aastharajput184@gmail.com" style="left:88.4%;top:96.2%;width:10.0%;height:2.6%" aria-label="Email aastharajput184@gmail.com" data-cur="link" data-label="Copy"></a>
+    </div></div>
   </section>
   <section class="pg" id="p3" data-i="3" data-x="0" aria-label="Page 3 of 45: Introduction, Contents">
-    <div class="frame">
-      <img src="img/03.webp" srcset="img/03.webp 2400w, img/xl/03.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="3" width="2400" height="849" alt="Introduction — Contents" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/03.webp" srcset="img/03.webp 2400w, img/xl/03.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="3" width="2400" height="849" alt="Introduction — Contents" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p4" data-i="4" data-x="1" aria-label="Page 4 of 45: Unbuilt, Title">
-    <div class="frame">
-      <img src="img/04.webp" srcset="img/04.webp 2400w, img/xl/04.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="4" width="2400" height="849" alt="Unbuilt — Title" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/04.webp" srcset="img/04.webp 2400w, img/xl/04.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="4" width="2400" height="849" alt="Unbuilt — Title" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p5" data-i="5" data-x="0" aria-label="Page 5 of 45: Unbuilt, Brand study &amp; moodboard">
-    <div class="frame">
-      <img src="img/05.webp" srcset="img/05.webp 2400w, img/xl/05.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="5" width="2400" height="849" alt="Unbuilt — Brand study &amp; moodboard" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/05.webp" srcset="img/05.webp 2400w, img/xl/05.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="5" width="2400" height="849" alt="Unbuilt — Brand study &amp; moodboard" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p6" data-i="6" data-x="0" aria-label="Page 6 of 45: Unbuilt, Inspiration &amp; colour board">
-    <div class="frame">
-      <img src="img/06.webp" srcset="img/06.webp 2400w, img/xl/06.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="6" width="2400" height="849" alt="Unbuilt — Inspiration &amp; colour board" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/06.webp" srcset="img/06.webp 2400w, img/xl/06.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="6" width="2400" height="849" alt="Unbuilt — Inspiration &amp; colour board" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p7" data-i="7" data-x="0" aria-label="Page 7 of 45: Unbuilt, Motif development">
-    <div class="frame">
-      <img src="img/07.webp" srcset="img/07.webp 2400w, img/xl/07.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="7" width="2400" height="849" alt="Unbuilt — Motif development" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/07.webp" srcset="img/07.webp 2400w, img/xl/07.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="7" width="2400" height="849" alt="Unbuilt — Motif development" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p8" data-i="8" data-x="0" aria-label="Page 8 of 45: Unbuilt, Print development">
-    <div class="frame">
-      <img src="img/08.webp" srcset="img/08.webp 2400w, img/xl/08.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="8" width="2400" height="849" alt="Unbuilt — Print development" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/08.webp" srcset="img/08.webp 2400w, img/xl/08.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="8" width="2400" height="849" alt="Unbuilt — Print development" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p9" data-i="9" data-x="0" aria-label="Page 9 of 45: Unbuilt, Print development">
-    <div class="frame">
-      <img src="img/09.webp" srcset="img/09.webp 2400w, img/xl/09.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="9" width="2400" height="849" alt="Unbuilt — Print development" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/09.webp" srcset="img/09.webp 2400w, img/xl/09.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="9" width="2400" height="849" alt="Unbuilt — Print development" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p10" data-i="10" data-x="0" aria-label="Page 10 of 45: Unbuilt, Home textiles in use">
-    <div class="frame">
-      <img src="img/10.webp" srcset="img/10.webp 2400w, img/xl/10.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="10" width="2400" height="849" alt="Unbuilt — Home textiles in use" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/10.webp" srcset="img/10.webp 2400w, img/xl/10.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="10" width="2400" height="849" alt="Unbuilt — Home textiles in use" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p11" data-i="11" data-x="0" aria-label="Page 11 of 45: Unbuilt, Home textiles in use">
-    <div class="frame">
-      <img src="img/11.webp" srcset="img/11.webp 2400w, img/xl/11.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="11" width="2400" height="849" alt="Unbuilt — Home textiles in use" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/11.webp" srcset="img/11.webp 2400w, img/xl/11.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="11" width="2400" height="849" alt="Unbuilt — Home textiles in use" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p12" data-i="12" data-x="1" aria-label="Page 12 of 45: Fables of Mithila, Title">
-    <div class="frame">
-      <img src="img/12.webp" srcset="img/12.webp 2400w, img/xl/12.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="12" width="2400" height="849" alt="Fables of Mithila — Title" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/12.webp" srcset="img/12.webp 2400w, img/xl/12.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="12" width="2400" height="849" alt="Fables of Mithila — Title" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p13" data-i="13" data-x="0" aria-label="Page 13 of 45: Fables of Mithila, Concept &amp; inspiration">
-    <div class="frame">
-      <img src="img/13.webp" srcset="img/13.webp 2400w, img/xl/13.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="13" width="2400" height="849" alt="Fables of Mithila — Concept &amp; inspiration" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/13.webp" srcset="img/13.webp 2400w, img/xl/13.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="13" width="2400" height="849" alt="Fables of Mithila — Concept &amp; inspiration" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p14" data-i="14" data-x="0" aria-label="Page 14 of 45: Fables of Mithila, Design process &amp; palette">
-    <div class="frame">
-      <img src="img/14.webp" srcset="img/14.webp 2400w, img/xl/14.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="14" width="2400" height="849" alt="Fables of Mithila — Design process &amp; palette" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/14.webp" srcset="img/14.webp 2400w, img/xl/14.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="14" width="2400" height="849" alt="Fables of Mithila — Design process &amp; palette" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p15" data-i="15" data-x="0" aria-label="Page 15 of 45: Fables of Mithila, Motif development">
-    <div class="frame">
-      <img src="img/15.webp" srcset="img/15.webp 2400w, img/xl/15.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="15" width="2400" height="849" alt="Fables of Mithila — Motif development" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/15.webp" srcset="img/15.webp 2400w, img/xl/15.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="15" width="2400" height="849" alt="Fables of Mithila — Motif development" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p16" data-i="16" data-x="0" aria-label="Page 16 of 45: Fables of Mithila, Print coordinates">
-    <div class="frame">
-      <img src="img/16.webp" srcset="img/16.webp 2400w, img/xl/16.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="16" width="2400" height="849" alt="Fables of Mithila — Print coordinates" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/16.webp" srcset="img/16.webp 2400w, img/xl/16.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="16" width="2400" height="849" alt="Fables of Mithila — Print coordinates" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p17" data-i="17" data-x="0" aria-label="Page 17 of 45: Fables of Mithila, Print coordinates">
-    <div class="frame">
-      <img src="img/17.webp" srcset="img/17.webp 2400w, img/xl/17.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="17" width="2400" height="849" alt="Fables of Mithila — Print coordinates" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/17.webp" srcset="img/17.webp 2400w, img/xl/17.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="17" width="2400" height="849" alt="Fables of Mithila — Print coordinates" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p18" data-i="18" data-x="0" aria-label="Page 18 of 45: Fables of Mithila, Print coordinates">
-    <div class="frame">
-      <img src="img/18.webp" srcset="img/18.webp 2400w, img/xl/18.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="18" width="2400" height="849" alt="Fables of Mithila — Print coordinates" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/18.webp" srcset="img/18.webp 2400w, img/xl/18.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="18" width="2400" height="849" alt="Fables of Mithila — Print coordinates" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p19" data-i="19" data-x="1" aria-label="Page 19 of 45: Saandra, Title">
-    <div class="frame">
-      <img src="img/19.webp" srcset="img/19.webp 2400w, img/xl/19.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="19" width="2400" height="849" alt="Saandra — Title" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/19.webp" srcset="img/19.webp 2400w, img/xl/19.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="19" width="2400" height="849" alt="Saandra — Title" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p20" data-i="20" data-x="0" aria-label="Page 20 of 45: Saandra, Concept note">
-    <div class="frame">
-      <img src="img/20.webp" srcset="img/20.webp 2400w, img/xl/20.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="20" width="2400" height="849" alt="Saandra — Concept note" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/20.webp" srcset="img/20.webp 2400w, img/xl/20.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="20" width="2400" height="849" alt="Saandra — Concept note" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p21" data-i="21" data-x="0" aria-label="Page 21 of 45: Saandra, Moodboard &amp; client profile">
-    <div class="frame">
-      <img src="img/21.webp" srcset="img/21.webp 2400w, img/xl/21.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="21" width="2400" height="849" alt="Saandra — Moodboard &amp; client profile" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/21.webp" srcset="img/21.webp 2400w, img/xl/21.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="21" width="2400" height="849" alt="Saandra — Moodboard &amp; client profile" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p22" data-i="22" data-x="0" aria-label="Page 22 of 45: Saandra, Motif development">
-    <div class="frame">
-      <img src="img/22.webp" srcset="img/22.webp 2400w, img/xl/22.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="22" width="2400" height="849" alt="Saandra — Motif development" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/22.webp" srcset="img/22.webp 2400w, img/xl/22.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="22" width="2400" height="849" alt="Saandra — Motif development" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p23" data-i="23" data-x="0" aria-label="Page 23 of 45: Saandra, Print development">
-    <div class="frame">
-      <img src="img/23.webp" srcset="img/23.webp 2400w, img/xl/23.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="23" width="2400" height="849" alt="Saandra — Print development" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/23.webp" srcset="img/23.webp 2400w, img/xl/23.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="23" width="2400" height="849" alt="Saandra — Print development" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p24" data-i="24" data-x="0" aria-label="Page 24 of 45: Saandra, Print development">
-    <div class="frame">
-      <img src="img/24.webp" srcset="img/24.webp 2400w, img/xl/24.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="24" width="2400" height="849" alt="Saandra — Print development" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/24.webp" srcset="img/24.webp 2400w, img/xl/24.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="24" width="2400" height="849" alt="Saandra — Print development" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p25" data-i="25" data-x="1" aria-label="Page 25 of 45: Seed Scriptures, Title">
-    <div class="frame">
-      <img src="img/25.webp" srcset="img/25.webp 2400w, img/xl/25.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="25" width="2400" height="849" alt="Seed Scriptures — Title" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/25.webp" srcset="img/25.webp 2400w, img/xl/25.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="25" width="2400" height="849" alt="Seed Scriptures — Title" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p26" data-i="26" data-x="0" aria-label="Page 26 of 45: Seed Scriptures, Keywords &amp; design process">
-    <div class="frame">
-      <img src="img/26.webp" srcset="img/26.webp 2400w, img/xl/26.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="26" width="2400" height="849" alt="Seed Scriptures — Keywords &amp; design process" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/26.webp" srcset="img/26.webp 2400w, img/xl/26.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="26" width="2400" height="849" alt="Seed Scriptures — Keywords &amp; design process" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p27" data-i="27" data-x="0" aria-label="Page 27 of 45: Seed Scriptures, Inspiration &amp; concept">
-    <div class="frame">
-      <img src="img/27.webp" srcset="img/27.webp 2400w, img/xl/27.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="27" width="2400" height="849" alt="Seed Scriptures — Inspiration &amp; concept" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/27.webp" srcset="img/27.webp 2400w, img/xl/27.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="27" width="2400" height="849" alt="Seed Scriptures — Inspiration &amp; concept" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p28" data-i="28" data-x="0" aria-label="Page 28 of 45: Seed Scriptures, Colour forecast &amp; audience">
-    <div class="frame">
-      <img src="img/28.webp" srcset="img/28.webp 2400w, img/xl/28.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="28" width="2400" height="849" alt="Seed Scriptures — Colour forecast &amp; audience" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/28.webp" srcset="img/28.webp 2400w, img/xl/28.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="28" width="2400" height="849" alt="Seed Scriptures — Colour forecast &amp; audience" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p29" data-i="29" data-x="0" aria-label="Page 29 of 45: Seed Scriptures, Motif generation">
-    <div class="frame">
-      <img src="img/29.webp" srcset="img/29.webp 2400w, img/xl/29.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="29" width="2400" height="849" alt="Seed Scriptures — Motif generation" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/29.webp" srcset="img/29.webp 2400w, img/xl/29.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="29" width="2400" height="849" alt="Seed Scriptures — Motif generation" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p30" data-i="30" data-x="0" aria-label="Page 30 of 45: Seed Scriptures, Prints &amp; silhouettes">
-    <div class="frame">
-      <img src="img/30.webp" srcset="img/30.webp 2400w, img/xl/30.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="30" width="2400" height="849" alt="Seed Scriptures — Prints &amp; silhouettes" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/30.webp" srcset="img/30.webp 2400w, img/xl/30.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="30" width="2400" height="849" alt="Seed Scriptures — Prints &amp; silhouettes" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p31" data-i="31" data-x="0" aria-label="Page 31 of 45: Seed Scriptures, Prints &amp; silhouettes">
-    <div class="frame">
-      <img src="img/31.webp" srcset="img/31.webp 2400w, img/xl/31.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="31" width="2400" height="849" alt="Seed Scriptures — Prints &amp; silhouettes" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/31.webp" srcset="img/31.webp 2400w, img/xl/31.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="31" width="2400" height="849" alt="Seed Scriptures — Prints &amp; silhouettes" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p32" data-i="32" data-x="0" aria-label="Page 32 of 45: Seed Scriptures, Final line-up">
-    <div class="frame">
-      <img src="img/32.webp" srcset="img/32.webp 2400w, img/xl/32.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="32" width="2400" height="849" alt="Seed Scriptures — Final line-up" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/32.webp" srcset="img/32.webp 2400w, img/xl/32.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="32" width="2400" height="849" alt="Seed Scriptures — Final line-up" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p33" data-i="33" data-x="1" aria-label="Page 33 of 45: Roundup, Title">
-    <div class="frame">
-      <img src="img/33.webp" srcset="img/33.webp 2400w, img/xl/33.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="33" width="2400" height="849" alt="Roundup — Title" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/33.webp" srcset="img/33.webp 2400w, img/xl/33.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="33" width="2400" height="849" alt="Roundup — Title" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p34" data-i="34" data-x="0" aria-label="Page 34 of 45: Roundup, Concept &amp; palette">
-    <div class="frame">
-      <img src="img/34.webp" srcset="img/34.webp 2400w, img/xl/34.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="34" width="2400" height="849" alt="Roundup — Concept &amp; palette" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/34.webp" srcset="img/34.webp 2400w, img/xl/34.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="34" width="2400" height="849" alt="Roundup — Concept &amp; palette" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p35" data-i="35" data-x="0" aria-label="Page 35 of 45: Roundup, Muffler 1 — weave drafts">
-    <div class="frame">
-      <img src="img/35.webp" srcset="img/35.webp 2400w, img/xl/35.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="35" width="2400" height="849" alt="Roundup — Muffler 1 — weave drafts" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/35.webp" srcset="img/35.webp 2400w, img/xl/35.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="35" width="2400" height="849" alt="Roundup — Muffler 1 — weave drafts" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p36" data-i="36" data-x="0" aria-label="Page 36 of 45: Roundup, Muffler 2 — weave drafts">
-    <div class="frame">
-      <img src="img/36.webp" srcset="img/36.webp 2400w, img/xl/36.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="36" width="2400" height="849" alt="Roundup — Muffler 2 — weave drafts" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/36.webp" srcset="img/36.webp 2400w, img/xl/36.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="36" width="2400" height="849" alt="Roundup — Muffler 2 — weave drafts" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p37" data-i="37" data-x="0" aria-label="Page 37 of 45: Roundup, The shoot">
-    <div class="frame">
-      <img src="img/37.webp" srcset="img/37.webp 2400w, img/xl/37.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="37" width="2400" height="849" alt="Roundup — The shoot" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/37.webp" srcset="img/37.webp 2400w, img/xl/37.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="37" width="2400" height="849" alt="Roundup — The shoot" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p38" data-i="38" data-x="1" aria-label="Page 38 of 45: Kargha, Title">
-    <div class="frame">
-      <img src="img/38.webp" srcset="img/38.webp 2400w, img/xl/38.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="38" width="2400" height="849" alt="Kargha — Title" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/38.webp" srcset="img/38.webp 2400w, img/xl/38.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="38" width="2400" height="849" alt="Kargha — Title" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p39" data-i="39" data-x="0" aria-label="Page 39 of 45: Kargha, Concept, texture &amp; material">
-    <div class="frame">
-      <img src="img/39.webp" srcset="img/39.webp 2400w, img/xl/39.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="39" width="2400" height="849" alt="Kargha — Concept, texture &amp; material" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/39.webp" srcset="img/39.webp 2400w, img/xl/39.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="39" width="2400" height="849" alt="Kargha — Concept, texture &amp; material" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p40" data-i="40" data-x="0" aria-label="Page 40 of 45: Kargha, Motifs &amp; colourways">
-    <div class="frame">
-      <img src="img/40.webp" srcset="img/40.webp 2400w, img/xl/40.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="40" width="2400" height="849" alt="Kargha — Motifs &amp; colourways" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/40.webp" srcset="img/40.webp 2400w, img/xl/40.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="40" width="2400" height="849" alt="Kargha — Motifs &amp; colourways" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p41" data-i="41" data-x="1" aria-label="Page 41 of 45: Baandh, Title">
-    <div class="frame">
-      <img src="img/41.webp" srcset="img/41.webp 2400w, img/xl/41.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="41" width="2400" height="849" alt="Baandh — Title" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/41.webp" srcset="img/41.webp 2400w, img/xl/41.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="41" width="2400" height="849" alt="Baandh — Title" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p42" data-i="42" data-x="0" aria-label="Page 42 of 45: Baandh, Tie &amp; dye samples">
-    <div class="frame">
-      <img src="img/42.webp" srcset="img/42.webp 2400w, img/xl/42.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="42" width="2400" height="849" alt="Baandh — Tie &amp; dye samples" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/42.webp" srcset="img/42.webp 2400w, img/xl/42.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="42" width="2400" height="849" alt="Baandh — Tie &amp; dye samples" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p43" data-i="43" data-x="0" aria-label="Page 43 of 45: Baandh, Tie &amp; dye samples">
-    <div class="frame">
-      <img src="img/43.webp" srcset="img/43.webp 2400w, img/xl/43.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="43" width="2400" height="849" alt="Baandh — Tie &amp; dye samples" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/43.webp" srcset="img/43.webp 2400w, img/xl/43.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="43" width="2400" height="849" alt="Baandh — Tie &amp; dye samples" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg" id="p44" data-i="44" data-x="0" aria-label="Page 44 of 45: Baandh, Cushion collection">
-    <div class="frame">
-      <img src="img/44.webp" srcset="img/44.webp 2400w, img/xl/44.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="44" width="2400" height="849" alt="Baandh — Cushion collection" loading="lazy" decoding="async" draggable="false">
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/44.webp" srcset="img/44.webp 2400w, img/xl/44.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="44" width="2400" height="849" alt="Baandh — Cushion collection" loading="lazy" decoding="async" draggable="false">
+    </div></div>
   </section>
   <section class="pg ch-start" id="p45" data-i="45" data-x="0.82" aria-label="Page 45 of 45: Thank you, Thank you">
-    <div class="frame">
-      <img src="img/45.webp" srcset="img/45.webp 2400w, img/xl/45.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="45" width="2400" height="849" alt="Thank you — Thank you" loading="lazy" decoding="async" draggable="false">
-      <a class="hot" href="mailto:aastharajput184@gmail.com" data-copy="aastharajput184@gmail.com" style="left:74.6%;top:83.2%;width:23.0%;height:6.4%" aria-label="Email aastharajput184@gmail.com" data-cur="link"></a>
-      <a class="hot" href="https://www.behance.net/ARa0953289" target="_blank" rel="noopener" style="left:74.6%;top:90.8%;width:13.8%;height:6.4%" aria-label="Behance" data-cur="link"></a>
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/45.webp" srcset="img/45.webp 2400w, img/xl/45.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="45" width="2400" height="849" alt="Thank you — Thank you" loading="lazy" decoding="async" draggable="false">
+      <a class="hot" href="mailto:aastharajput184@gmail.com" data-copy="aastharajput184@gmail.com" style="left:74.6%;top:83.2%;width:23.0%;height:6.4%" aria-label="Email aastharajput184@gmail.com" data-cur="link" data-label="Copy"></a>
+      <a class="hot" href="https://www.behance.net/ARa0953289" target="_blank" rel="noopener" style="left:74.6%;top:90.8%;width:13.8%;height:6.4%" aria-label="Behance" data-cur="link" data-label="Open"></a>
+    </div></div>
   </section>
+  <div class="end"><button id="totop" type="button" data-cur="btn" data-mag>Back to top <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></button></div>
 </main>
 
 <div id="ix" role="dialog" aria-modal="true" aria-label="Index" hidden>
-  <div class="ix-top"><h2>Index</h2><button class="ix-close" id="ixClose" type="button" data-cur="btn">Close</button></div>
+  <div class="ix-top"><h2>Index</h2><button class="ix-close" id="ixClose" type="button" data-cur="btn" data-mag>Close</button></div>
   <ul class="ix-list">
-      <li><button type="button" class="ix-item" data-go="1" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="1" data-cur="btn" data-label="Open">
         <span class="ix-thumb" style="--ox:50%"><img alt="" data-src="img/01.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">01–03</span><span class="ix-title">Introduction</span><span class="ix-sub">Cover, about and contents</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="4" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="4" data-cur="btn" data-label="Open">
         <span class="ix-thumb"><img alt="" data-src="img/04.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">04–11</span><span class="ix-title">Unbuilt</span><span class="ix-sub">Surface design · home textiles</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="12" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="12" data-cur="btn" data-label="Open">
         <span class="ix-thumb"><img alt="" data-src="img/12.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">12–18</span><span class="ix-title">Fables of Mithila</span><span class="ix-sub">Print design · Madhubani narratives</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="19" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="19" data-cur="btn" data-label="Open">
         <span class="ix-thumb"><img alt="" data-src="img/19.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">19–24</span><span class="ix-title">Saandra</span><span class="ix-sub">Print design · Rajasthani geometry</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="25" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="25" data-cur="btn" data-label="Open">
         <span class="ix-thumb"><img alt="" data-src="img/25.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">25–32</span><span class="ix-title">Seed Scriptures</span><span class="ix-sub">Print design · the pomegranate</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="33" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="33" data-cur="btn" data-label="Open">
         <span class="ix-thumb"><img alt="" data-src="img/33.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">33–37</span><span class="ix-title">Roundup</span><span class="ix-sub">Woven mufflers</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="38" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="38" data-cur="btn" data-label="Open">
         <span class="ix-thumb"><img alt="" data-src="img/38.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">38–40</span><span class="ix-title">Kargha</span><span class="ix-sub">Woven waist belt</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="41" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="41" data-cur="btn" data-label="Open">
         <span class="ix-thumb"><img alt="" data-src="img/41.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">41–44</span><span class="ix-title">Baandh</span><span class="ix-sub">Tie &amp; dye</span></span>
       </button></li>
-      <li><button type="button" class="ix-item" data-go="45" data-cur="btn">
+      <li><button type="button" class="ix-item" data-go="45" data-cur="btn" data-label="Open">
         <span class="ix-thumb" style="--ox:50%"><img alt="" data-src="img/45.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">45</span><span class="ix-title">Thank you</span><span class="ix-sub">Contact</span></span>
       </button></li>
   </ul>
   <div class="ix-links">
-    <a href="mailto:aastharajput184@gmail.com">aastharajput184@gmail.com</a>
-    <a href="mailto:astha.rajput@nift.ac.in">astha.rajput@nift.ac.in</a>
-    <a href="https://www.behance.net/ARa0953289" target="_blank" rel="noopener">Behance</a>
-    <a href="https://www.linkedin.com/in/aastha-rajput-44491b2b2" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:aastharajput184@gmail.com" data-cur="btn" data-label="Mail">aastharajput184@gmail.com</a>
+    <a href="mailto:astha.rajput@nift.ac.in" data-cur="btn" data-label="Mail">astha.rajput@nift.ac.in</a>
+    <a href="https://www.behance.net/ARa0953289" target="_blank" rel="noopener" data-cur="btn" data-label="Open">Behance</a>
+    <a href="https://www.linkedin.com/in/aastha-rajput-44491b2b2" target="_blank" rel="noopener" data-cur="btn" data-label="Open">LinkedIn</a>
   </div>
 </div>
 
@@ -558,63 +605,110 @@ var D=JSON.parse(document.getElementById("data").textContent), P=D.pages, C=D.ch
 function $(s,r){return (r||document).querySelector(s)}
 function $$(s,r){return [].slice.call((r||document).querySelectorAll(s))}
 function pad(n){return n<10?"0"+n:""+n}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function chapterOf(i){for(var k=0;k<C.length;k++)if(i>=C[k].start&&i<=C[k].end)return C[k];return C[0]}
+function ss(k,v){try{if(v===undefined)return sessionStorage.getItem(k);sessionStorage.setItem(k,v)}catch(e){return null}}
 var root=document.documentElement;
 var reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
 var fine=matchMedia("(hover: hover) and (pointer: fine)").matches;
 var mqP=matchMedia("(max-aspect-ratio: 1/1)");
 root.classList.add(fine?"fine":"coarse");
 
-var secs=$$(".pg"), tops=[], cur=0, ready=false, idxOpen=false, portrait=false;
+var secs=$$(".pg"), frames=secs.map(function(s){return $(".frame",s)}), arts=secs.map(function(s){return $(".art",s)});
+var isTitle=secs.map(function(s){return s.classList.contains("ch-start")});
+var tops=[], hs=[], cur=0, ready=false, idxOpen=false, portrait=false;
 
 function layout(){portrait=mqP.matches;root.classList.toggle("portrait",portrait);measure();if(portrait)startRows()}
+function measure(){var y=pageYOffset;tops=secs.map(function(s){return s.getBoundingClientRect().top+y});hs=secs.map(function(s){return s.offsetHeight})}
 function startRows(){secs.forEach(function(s){var x=+s.dataset.x||0;s.scrollLeft=(s.scrollWidth-s.clientWidth)*x})}
-function measure(){var y=pageYOffset;tops=secs.map(function(s){return s.getBoundingClientRect().top+y})}
+function maxY(){return document.documentElement.scrollHeight-innerHeight}
 layout();
 
-/* ---------- loader: wait for the first two pages ---------- */
-var lcount=$("#lcount"), lline=$("#lline"), shown=0, target=0;
+/* ---------- loader: letters write in, then the screen splits open ---------- */
+var lname=$("#lname");
+lname.innerHTML=lname.textContent.split("").map(function(ch,k){
+  return ch===" "?" ":'<span class="c" style="--i:'+k+'">'+ch.replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</span>";
+}).join("");
+lname.classList.add("split");
+var lcount=$("#lcount"), lline=$("#lline"), shown=0, target=0, t0=performance.now();
 var first=secs.slice(0,2).map(function(s){return $("img",s)});
-function progress(){
-  var done=first.filter(function(im){return im.complete&&im.naturalWidth}).length;
-  target=Math.max(target,done/first.length*100);
-}
+function progress(){target=Math.max(target,first.filter(function(im){return im.complete&&im.naturalWidth}).length/first.length*100)}
 first.forEach(function(im){im.addEventListener("load",progress);im.addEventListener("error",progress)});
 progress();
-var t0=performance.now();
+var minShow=reduced?0:1700;
 (function count(){
-  shown+= (target-shown)*0.12 + 0.25; if(shown>target)shown=target;
-  lcount.textContent=pad(Math.min(99,Math.round(shown)));
-  lline.style.width=shown+"%";
-  if(shown>=99.5||performance.now()-t0>6000){lcount.textContent="100";lline.style.width="100%";setTimeout(start,reduced?0:350);return}
+  shown+=(target-shown)*0.1+0.3; if(shown>target)shown=target;
+  lcount.textContent=pad(Math.min(99,Math.round(shown))); lline.style.width=shown+"%";
+  var t=performance.now()-t0;
+  if((shown>=99.5&&t>minShow)||t>6000){lcount.textContent="100";lline.style.width="100%";setTimeout(start,reduced?0:250);return}
   requestAnimationFrame(count);
 })();
 function start(){
   if(ready)return; ready=true;
-  var L=$("#loader"); L.classList.add("out");
-  setTimeout(function(){L.remove()},reduced?0:1200);
+  var L=$("#loader"); L.classList.add("out"); setTimeout(function(){L.remove()},reduced?0:1500);
   root.classList.remove("loading");
   measure();
-  var m=/^#p(\d+)$/.exec(location.hash), n=m?Math.max(1,Math.min(N,+m[1])):1;
-  if(n>1){window.scrollTo(0,tops[n-1])}
+  var m=/^#p(\d+)$/.exec(location.hash), n=m?clamp(+m[1],1,N):1;
+  if(n>1)goTo(n,true);
   onScroll(true);
-  if(portrait&&!sessionStorageGet("swiped")){setTimeout(function(){toast("Swipe sideways to read each page · hold to magnify",4200)},1400)}
+  if(portrait&&!ss("swiped"))setTimeout(function(){toast("Swipe sideways to read each page · hold to magnify",4200)},1600);
 }
-function sessionStorageGet(k){try{return sessionStorage.getItem(k)}catch(e){return null}}
-function sessionStorageSet(k){try{sessionStorage.setItem(k,"1")}catch(e){}}
 
-/* ---------- current page, labels, rail, progress ---------- */
-var curn=$("#curn"), bar=$("#bar"), hint=$("#hint"), ticks=$$(".tick"), tip=$("#tip");
+/* ---------- smooth scrolling (mouse & trackpad) + gliding page jumps ---------- */
+var sy=0, sTarget=0, mode=0, tw=null, running=false;
+function smoothOn(){return fine&&!reduced&&!portrait}
+function ease(k){return k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2}
+function wheelScroll(d){
+  if(mode===0)sy=pageYOffset;
+  if(mode!==1)sTarget=sy;
+  mode=1; sTarget=clamp(sTarget+d,0,maxY()); run();
+}
+function tweenTo(y,dur){
+  y=clamp(y,0,maxY()); sy=pageYOffset;
+  tw={from:sy,to:y,t0:performance.now(),dur:dur||clamp(500+Math.abs(y-sy)*0.12,650,1400)}; mode=2; run();
+}
+function run(){if(!running){running=true;requestAnimationFrame(stepS)}}
+function stepS(){
+  if(mode===1){sy+=(sTarget-sy)*0.1; if(Math.abs(sTarget-sy)<0.5){sy=sTarget;mode=0}}
+  else if(mode===2){var k=Math.min(1,(performance.now()-tw.t0)/tw.dur); sy=tw.from+(tw.to-tw.from)*ease(k); if(k>=1)mode=0}
+  window.scrollTo(0,sy);
+  if(mode!==0)requestAnimationFrame(stepS); else running=false;
+}
+addEventListener("mousedown",function(e){if(e.clientX>=document.documentElement.clientWidth)mode=0},{passive:true}); /* grabbing the scrollbar */
+function normDelta(e){return e.deltaY*(e.deltaMode===1?32:e.deltaMode===2?innerHeight:1)}
+
+function targetFor(i){
+  if(i<=1)return 0;
+  if(portrait)return tops[i-1];
+  return tops[i-1]+hs[i-1]/2-innerHeight/2;   /* centre the page on screen */
+}
+function goTo(i,instant){
+  i=clamp(i,1,N); measure(); loupeOn=false;
+  var y=clamp(targetFor(i),0,maxY());
+  if(instant){mode=0;window.scrollTo(0,y)}
+  else if(smoothOn())tweenTo(y);
+  else window.scrollTo({top:y,behavior:reduced?"auto":"smooth"});
+}
+function step(d){goTo((cur||1)+d)}
+
+/* ---------- current page, labels, rail, progress, project flash, finale ---------- */
+var curn=$("#curn"), bar=$("#bar"), hint=$("#hint"), ticks=$$(".tick"), tip=$("#tip"), totop=$("#totop");
 function roll(el,text){
   var old=$(".r:not(.leave)",el); if(old&&old.textContent===text)return;
   var nu=document.createElement("span"); nu.className="r"; nu.textContent=text;
   if(reduced||!old){el.textContent="";el.appendChild(nu);return}
-  nu.style.transform="translateY(110%)"; el.appendChild(nu);
-  old.classList.add("leave");
+  nu.style.transform="translateY(110%)"; el.appendChild(nu); old.classList.add("leave");
   requestAnimationFrame(function(){requestAnimationFrame(function(){old.style.transform="translateY(-110%)";nu.style.transform="none"})});
   setTimeout(function(){old.remove()},750);
 }
-var hashT=null, lastCh=null;
+var hashT=null, flashT=null, lastCh=null, cf=$("#chflash");
+function flash(ch){
+  if(reduced||ch.id==="intro")return;
+  var k=C.indexOf(ch);
+  $("#cfNum").textContent=ch.id==="thanks"?"":pad(k)+" / "+pad(C.length-2);
+  $("#cfTitle").textContent=ch.title; $("#cfSub").textContent=ch.sub;
+  cf.classList.remove("on"); void cf.offsetWidth; cf.classList.add("on");
+}
 function setCur(i){
   if(i===cur)return; cur=i;
   curn.textContent=pad(i);
@@ -622,6 +716,9 @@ function setCur(i){
   roll($("#chName"),ch.title);
   roll($("#pgTitle"),P[i-1]===ch.title?"":P[i-1]);
   ticks.forEach(function(t,k){t.classList.toggle("on",k===i-1)});
+  if(ready&&lastCh&&ch!==lastCh){clearTimeout(flashT);flashT=setTimeout(function(){if(chapterOf(cur)===ch&&!idxOpen)flash(ch)},140)}
+  lastCh=ch;
+  if(i===N){$("#p45").classList.add("finale");totop.classList.add("show")}
   clearTimeout(hashT); hashT=setTimeout(function(){try{history.replaceState(null,"",i===1?location.pathname:"#p"+i)}catch(e){}},250);
 }
 var ticking=false;
@@ -629,27 +726,33 @@ function onScroll(force){
   if(ticking&&!force)return; ticking=true;
   requestAnimationFrame(function(){
     ticking=false;
-    var y=pageYOffset, probe=y+innerHeight*0.45, i=1;
-    for(var k=0;k<tops.length;k++){if(tops[k]<=probe)i=k+1}
-    if(y+innerHeight>=document.documentElement.scrollHeight-2)i=N;
-    setCur(i);
-    var max=document.documentElement.scrollHeight-innerHeight;
-    bar.style.transform="scaleX("+(max>0?y/max:0)+")";
+    var y=pageYOffset, mid=y+innerHeight/2, best=1, bd=1e9;
+    for(var k=0;k<tops.length;k++){var d=Math.abs(tops[k]+hs[k]/2-mid);if(d<bd){bd=d;best=k+1}}
+    if(y>=maxY()-2)best=N;
+    setCur(best);
+    var mx_=maxY(); bar.style.transform="scaleX("+(mx_>0?y/mx_:0)+")";
     hint.classList.toggle("gone",y>40);
   });
 }
 addEventListener("scroll",function(){onScroll()},{passive:true});
 
-function goTo(i,instant){
-  i=Math.max(1,Math.min(N,i)); measure();
-  window.scrollTo({top:tops[i-1],behavior:(instant||reduced)?"auto":"smooth"});
+/* ---------- gentle zoom on every page + parallax on project title pages ---------- */
+var fxState=[];
+function fx(){
+  var vh=innerHeight, y=pageYOffset, mid=y+vh/2;
+  for(var k=0;k<secs.length;k++){
+    var top=tops[k], h=hs[k];
+    if(top+h<y-80||top>y+vh+80){continue}
+    var p=clamp((top+h/2-mid)/((vh+h)/2),-1,1), a=Math.abs(p);
+    var fs=1-0.05*a*a;                                   /* card settles to full size at the centre */
+    var t=isTitle[k]?"translate3d(0,"+(-p*2.6).toFixed(3)+"%,0) scale(1.06)"   /* artwork drifts slower */
+                     :"scale("+(1+0.07*a).toFixed(4)+")";                       /* content settles from slightly enlarged */
+    var key=fs.toFixed(4)+t;
+    if(fxState[k]!==key){fxState[k]=key;frames[k].style.transform="scale("+fs.toFixed(4)+")";arts[k].style.transform=t}
+  }
 }
-function step(d){goTo((cur||1)+d)}
-$("#prev").addEventListener("click",function(){step(-1)});
-$("#next").addEventListener("click",function(){step(1)});
-$$("[data-go]").forEach(function(el){
-  el.addEventListener("click",function(e){e.preventDefault();var n=+el.dataset.go;if(idxOpen){closeIndex(function(){goTo(n,true)})}else goTo(n)});
-});
+
+/* ---------- rail ---------- */
 ticks.forEach(function(t,k){
   t.addEventListener("mouseenter",function(){
     tip.textContent=pad(k+1)+"  "+chapterOf(k+1).title+" — "+P[k];
@@ -657,28 +760,42 @@ ticks.forEach(function(t,k){
   });
   t.addEventListener("mouseleave",function(){tip.classList.remove("on")});
 });
+$("#prev").addEventListener("click",function(){step(-1)});
+$("#next").addEventListener("click",function(){step(1)});
+totop.addEventListener("click",function(){goTo(1)});
+$$("[data-go]").forEach(function(el){
+  el.addEventListener("click",function(e){e.preventDefault();var n=+el.dataset.go;
+    if(idxOpen){closeIndex();goTo(n,true);lastCh=null;setTimeout(function(){flash(chapterOf(n))},380)}else goTo(n)});
+});
 
-/* ---------- index overlay ---------- */
+/* ---------- index overlay (thumbnails tilt in 3D with the mouse) ---------- */
 var ix=$("#ix"), ixBtn=$("#ixBtn");
 function openIndex(){
-  if(idxOpen)return; idxOpen=true; loupeOn=false;
-  $$(".ix-thumb img",ix).forEach(function(im,k){if(!im.src)im.src=im.dataset.src;im.closest(".ix-item").style.setProperty("--d",(k*0.05)+"s")});
+  if(idxOpen)return; idxOpen=true; loupeOn=false; mode=0;
+  $$(".ix-thumb img",ix).forEach(function(im,k){if(!im.getAttribute("src"))im.src=im.dataset.src;im.closest("li").style.setProperty("--d",(k*0.05)+"s")});
   var r=ixBtn.getBoundingClientRect();
   ix.style.setProperty("--cx",(r.left+r.width/2)+"px"); ix.style.setProperty("--cy",(r.top+r.height/2)+"px");
   ix.hidden=false; ix.scrollTop=0; root.classList.add("ix-open"); ixBtn.setAttribute("aria-expanded","true");
-  $$(".ix-item",ix).forEach(function(b){b.classList.toggle("cur",+b.dataset.go<=cur&&chapterOf(cur).start===+b.dataset.go)});
   requestAnimationFrame(function(){requestAnimationFrame(function(){ix.classList.add("open")})});
   setTimeout(function(){$("#ixClose").focus({preventScroll:true})},50);
 }
-function closeIndex(after){
+function closeIndex(){
   if(!idxOpen)return; idxOpen=false;
   ix.classList.add("closing"); ix.classList.remove("open");
   root.classList.remove("ix-open"); ixBtn.setAttribute("aria-expanded","false");
-  if(typeof after==="function")after();
-  setTimeout(function(){ix.classList.remove("closing");ix.hidden=true;},reduced?0:900);
+  setTimeout(function(){ix.classList.remove("closing");ix.hidden=true},reduced?0:900);
 }
 ixBtn.addEventListener("click",openIndex);
 $("#ixClose").addEventListener("click",function(){closeIndex();ixBtn.focus({preventScroll:true})});
+if(fine&&!reduced)$$(".ix-thumb",ix).forEach(function(t){
+  t.addEventListener("mousemove",function(e){
+    var r=t.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
+    t.classList.add("tilting");
+    t.style.transform="perspective(900px) rotateX("+((0.5-y)*11).toFixed(2)+"deg) rotateY("+((x-0.5)*15).toFixed(2)+"deg) scale(1.035)";
+    t.style.setProperty("--sx",(x*100)+"%"); t.style.setProperty("--sy",(y*100)+"%");
+  });
+  t.addEventListener("mouseleave",function(){t.classList.remove("tilting");t.style.transform=""});
+});
 
 /* ---------- keyboard ---------- */
 addEventListener("keydown",function(e){
@@ -712,8 +829,8 @@ $$(".hot[data-copy]").forEach(function(a){
   });
 });
 
-/* ---------- magnifier ---------- */
-var loupe=$("#loupe"), loupeOn=false, inPage=null, mx=-500, my=-500, zoom=2.5, loupeS=0, xlWarm={};
+/* ---------- magnifier (wobbles as it moves; the scroll wheel zooms while it is open) ---------- */
+var loupe=$("#loupe"), loupeOn=false, inPage=null, mx=-500, my=-500, pmx=-500, pmy=-500, vx=0, vy=0, zoom=2.5, loupeS=0, xlWarm={};
 function xl(n){return "img/xl/"+pad(n)+".webp"}
 function std(n){return "img/"+pad(n)+".webp"}
 function setLoupeImage(pg){
@@ -723,96 +840,115 @@ function setLoupeImage(pg){
 }
 var zT=null;
 function setZoom(z){
-  zoom=Math.max(1.5,Math.min(5,Math.round(z*2)/2));
-  loupe.dataset.z=zoom+"×"; loupe.classList.add("zshow");
+  zoom=clamp(z,1.5,6);
+  loupe.dataset.z=zoom.toFixed(1)+"×"; loupe.classList.add("zshow");
   clearTimeout(zT); zT=setTimeout(function(){loupe.classList.remove("zshow")},900);
 }
 function paintLoupe(){
   var want=(loupeOn&&inPage)?1:0;
   loupeS+=(want-loupeS)*(reduced?1:0.2);
+  vx+=((mx-pmx)-vx)*0.25; vy+=((my-pmy)-vy)*0.25; pmx=mx; pmy=my;
   if(loupeS>0.02&&inPage){
     var size=loupe.offsetWidth, half=size/2;
-    var r=$(".frame",inPage).getBoundingClientRect(), bw=r.width*zoom, bh=r.height*zoom;
+    var r=$(".art",inPage).getBoundingClientRect(), bw=r.width*zoom, bh=r.height*zoom;
     var px=(mx-r.left)/r.width*bw, py=(my-r.top)/r.height*bh;
-    var oy=fine?0:-(half+48);           /* on touch, lift the lens above the finger */
+    var oy=fine?0:-(half+48);
+    var sp=Math.hypot(vx,vy), st=reduced?0:Math.min(0.16,sp*0.0045), ang=Math.atan2(vy,vx)*57.2958;
     loupe.style.backgroundSize=bw+"px "+bh+"px";
     loupe.style.backgroundPosition=(half-px)+"px "+(half-py)+"px";
     loupe.style.opacity=Math.min(1,loupeS*1.6);
-    loupe.style.transform="translate3d("+mx+"px,"+(my+oy)+"px,0) translate(-50%,-50%) scale("+(0.35+0.65*loupeS)+") rotate("+((1-loupeS)*-12)+"deg)";
+    loupe.style.transform="translate3d("+mx+"px,"+(my+oy)+"px,0) translate(-50%,-50%) rotate("+ang+"deg) scale("+(1+st)+","+(1-st*0.7)+") rotate("+(-ang)+"deg) scale("+(0.35+0.65*loupeS)+") rotate("+((1-loupeS)*-12)+"deg)";
   }else loupe.style.opacity=0;
 }
 
+/* one wheel handler: zoom the lens when it is open, otherwise smooth-scroll */
+addEventListener("wheel",function(e){
+  if(idxOpen||!ready)return;
+  if(loupeOn&&inPage&&!e.ctrlKey){e.preventDefault();setZoom(zoom*Math.exp(-clamp(normDelta(e),-120,120)*0.0011));return}
+  if(!smoothOn()||e.ctrlKey)return;
+  if(Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+  e.preventDefault(); wheelScroll(normDelta(e));
+},{passive:false});
+
 if(fine){
-  var cdot=$("#cdot"), cring=$("#cring"), clbl=$("span",cring), rx=-500, ry=-500, seen=false, hinted=false;
-  var SIZES={none:40,page:84,link:66,btn:56};
+  var cdot=$("#cdot"), cring=$("#cring"), clbl=$("span",cring), rx=-500, ry=-500, seen=false, hinted=false, mag=null, press=1, pressT=1;
+  var SIZES={none:40,page:84,link:70,btn:62};
   addEventListener("mousemove",function(e){
     mx=e.clientX;my=e.clientY;
-    if(!seen){seen=true;rx=mx;ry=my;cdot.classList.add("on");cring.classList.add("on")}
+    if(!seen){seen=true;rx=pmx=mx;ry=pmy=my;cdot.classList.add("on");cring.classList.add("on")}
   },{passive:true});
+  addEventListener("mousedown",function(){pressT=0.78},{passive:true});
+  addEventListener("mouseup",function(){pressT=1},{passive:true});
   root.addEventListener("mouseleave",function(){cdot.classList.remove("on");cring.classList.remove("on")});
   root.addEventListener("mouseenter",function(){if(seen){cdot.classList.add("on");cring.classList.add("on")}});
-  document.addEventListener("mouseover",function(e){
-    var t=e.target.closest?e.target.closest("[data-cur]"):null;
-    var pg=e.target.closest?e.target.closest(".pg"):null;
+  function ringFor(target){
+    var t=target&&target.closest?target.closest("[data-cur]"):null;
+    var pg=target&&target.closest?target.closest(".pg"):null;
     var kind=t?t.dataset.cur:(pg?"page":"none");
-    cring.style.setProperty("--rs",(SIZES[kind]||40)+"px");
-    var label=(kind==="page"&&!loupeOn)?"Zoom":"";
+    mag=(t&&t.hasAttribute("data-mag"))?t:null;
+    var size=SIZES[kind]||40;
+    if(mag){var r=mag.getBoundingClientRect();size=Math.max(r.width,r.height)+14}
+    cring.style.setProperty("--rs",size+"px");
+    cring.style.borderRadius=(mag&&mag.offsetWidth>mag.offsetHeight*1.6)?"999px":"50%";
+    if(mag){cring.style.width=(mag.getBoundingClientRect().width+14)+"px";cring.style.height=(mag.getBoundingClientRect().height+14)+"px"}
+    else{cring.style.width="";cring.style.height=""}
+    var label=mag?"":(t&&t.dataset.label)?t.dataset.label:(kind==="page"&&!loupeOn)?"Zoom":"";
     clbl.textContent=label; cring.classList.toggle("lbl",!!label);
-    inPage=(pg&&!e.target.closest(".hot"))?pg:null;
-    if(pg&&!hinted&&ready&&!idxOpen){hinted=true;setTimeout(function(){toast("Click any page to magnify · press + / − to change the zoom",3800)},600)}
+    inPage=(pg&&!target.closest(".hot"))?pg:null;
+    return pg;
+  }
+  document.addEventListener("mouseover",function(e){
+    var pg=ringFor(e.target);
+    if(pg&&!hinted&&ready&&!idxOpen){hinted=true;setTimeout(function(){toast("Click a page to magnify · scroll to zoom in · click again to close",4200)},500)}
     if(loupeOn&&inPage)setLoupeImage(inPage);
   });
   document.addEventListener("click",function(e){
     if(!ready||idxOpen)return;
     var pg=e.target.closest(".pg"); if(!pg||e.target.closest(".hot"))return;
-    loupeOn=!loupeOn; inPage=pg;
+    loupeOn=!loupeOn; inPage=pg; mode=0;
     if(loupeOn)setLoupeImage(pg);
-    clbl.textContent=loupeOn?"":"Zoom"; cring.classList.toggle("lbl",!loupeOn);
+    ringFor(e.target);
   });
-  /* while magnifying, the wheel with Shift (or a pinch on a trackpad) changes zoom */
-  addEventListener("wheel",function(e){
-    if(!loupeOn||!inPage)return;
-    if(e.ctrlKey||e.shiftKey){e.preventDefault();setZoom(zoom+(e.deltaY<0?0.5:-0.5))}
-  },{passive:false});
   (function tick(){
-    rx+=(mx-rx)*0.2; ry+=(my-ry)*0.2;
+    var tx=mx, ty=my;
+    if(mag){var r=mag.getBoundingClientRect();tx=r.left+r.width/2+(mx-(r.left+r.width/2))*0.15;ty=r.top+r.height/2+(my-(r.top+r.height/2))*0.15}
+    rx+=(tx-rx)*0.2; ry+=(ty-ry)*0.2; press+=(pressT-press)*0.3;
     cdot.style.transform="translate3d("+mx+"px,"+my+"px,0) translate(-50%,-50%)";
-    cring.style.transform="translate3d("+rx+"px,"+ry+"px,0) translate(-50%,-50%)";
-    cring.classList.toggle("hide",loupeOn&&!!inPage);
-    cdot.style.opacity=(loupeOn&&inPage)?0:"";
-    paintLoupe();
+    cring.style.transform="translate3d("+rx+"px,"+ry+"px,0) translate(-50%,-50%) scale("+press.toFixed(3)+")";
+    var lensOn=loupeOn&&!!inPage;
+    cring.classList.toggle("hide",lensOn); cdot.style.opacity=lensOn?0:"";
+    paintLoupe(); if(!reduced)fx();
     requestAnimationFrame(tick);
   })();
 }else{
   /* touch: press and hold a page to magnify, slide to move the lens, lift to close */
-  var holdT=null, sx=0, sy=0, holding=false, raf=null;
-  function loop(){paintLoupe(); if(holding||loupeS>0.02)raf=requestAnimationFrame(loop); else raf=null}
+  var holdT=null, sx=0, sy0=0, holding=false;
   document.addEventListener("touchstart",function(e){
     if(!ready||idxOpen||e.touches.length>1)return;
     var pg=e.target.closest(".pg"); if(!pg||e.target.closest(".hot"))return;
-    var t=e.touches[0]; sx=mx=t.clientX; sy=my=t.clientY;
+    var t=e.touches[0]; sx=mx=pmx=t.clientX; sy0=my=pmy=t.clientY;
     clearTimeout(holdT);
     holdT=setTimeout(function(){
       holding=true; loupeOn=true; inPage=pg; zoom=2.5; setLoupeImage(pg);
       if(navigator.vibrate)try{navigator.vibrate(8)}catch(_){}
-      if(!raf)loop();
     },320);
   },{passive:true});
   document.addEventListener("touchmove",function(e){
     var t=e.touches[0]; if(!t)return;
     if(holding){e.preventDefault(); mx=t.clientX; my=t.clientY; return}
-    if(Math.abs(t.clientX-sx)>8||Math.abs(t.clientY-sy)>8)clearTimeout(holdT);
+    if(Math.abs(t.clientX-sx)>8||Math.abs(t.clientY-sy0)>8)clearTimeout(holdT);
   },{passive:false});
-  function endHold(){clearTimeout(holdT); if(holding){holding=false;loupeOn=false;sessionStorageSet("swiped"); if(!raf)loop()}}
+  function endHold(){clearTimeout(holdT); if(holding){holding=false;loupeOn=false;ss("swiped","1")}}
   document.addEventListener("touchend",endHold);
   document.addEventListener("touchcancel",endHold);
   document.addEventListener("contextmenu",function(e){if(e.target.closest(".pg"))e.preventDefault()});
-  secs.forEach(function(s){s.addEventListener("scroll",function(){sessionStorageSet("swiped")},{passive:true,once:true})});
+  secs.forEach(function(s){s.addEventListener("scroll",function(){ss("swiped","1")},{passive:true,once:true})});
+  (function tick(){paintLoupe(); if(!reduced)fx(); requestAnimationFrame(tick)})();
 }
 
 /* ---------- resize ---------- */
 var rzT=null;
-addEventListener("resize",function(){clearTimeout(rzT);rzT=setTimeout(function(){var i=cur||1;layout();if(ready)goTo(i,true)},160)});
+addEventListener("resize",function(){clearTimeout(rzT);rzT=setTimeout(function(){var i=cur||1;fxState=[];layout();if(ready)goTo(i,true)},160)});
 addEventListener("load",function(){measure();onScroll(true)});
 })();
 </script>

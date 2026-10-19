@@ -85,18 +85,18 @@ for n in range(1, 46):
         style = f"left:{l}%;top:{t}%;width:{w}%;height:{h}%"
         if kind == "email":
             hots += (f'\n      <a class="hot" href="mailto:{esc(target)}" data-copy="{esc(target)}" '
-                     f'style="{style}" aria-label="{esc(label)}" data-cur="link"></a>')
+                     f'style="{style}" aria-label="{esc(label)}" data-cur="link" data-label="Copy"></a>')
         else:
             hots += (f'\n      <a class="hot" href="{esc(target)}" target="_blank" rel="noopener" '
-                     f'style="{style}" aria-label="{esc(label)}" data-cur="link"></a>')
+                     f'style="{style}" aria-label="{esc(label)}" data-cur="link" data-label="Open"></a>')
     eager = n <= 3
     # where a phone held upright starts each page (0 = left edge, 1 = right edge)
     x = 0.6 if n == 1 else 0.82 if n == 45 else 1 if n == c[3] else 0
     sections.append(
 f'''  <section class="pg{" ch-start" if n == c[3] else ""}" id="p{n}" data-i="{n}" data-x="{x}" aria-label="Page {n} of 45: {esc(c[1])}, {esc(title)}">
-    <div class="frame">
-      <img src="img/{n:02d}.webp" srcset="img/{n:02d}.webp 2400w, img/xl/{n:02d}.webp 4200w" sizes="(max-aspect-ratio: 1/1) 283vh, 100vw" data-n="{n}" width="2400" height="849" alt="{esc(c[1])} — {esc(title)}"{' fetchpriority="high"' if n == 1 else ''}{'' if eager else ' loading="lazy"'} decoding="async" draggable="false">{hots}
-    </div>
+    <div class="frame"><div class="art">
+      <img src="img/{n:02d}.webp" srcset="img/{n:02d}.webp 2400w, img/xl/{n:02d}.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="{n}" width="2400" height="849" alt="{esc(c[1])} — {esc(title)}"{' fetchpriority="high"' if n == 1 else ''}{'' if eager else ' loading="lazy"'} decoding="async" draggable="false">{hots}
+    </div></div>
   </section>''')
 
 data = {
@@ -114,7 +114,7 @@ index_items = []
 for a, b, s, x, y in CHAPTERS:
     rng = f"{x:02d}" if x == y else f"{x:02d}–{y:02d}"
     index_items.append(
-f'''      <li><button type="button" class="ix-item" data-go="{x}" data-cur="btn">
+f'''      <li><button type="button" class="ix-item" data-go="{x}" data-cur="btn" data-label="Open">
         <span class="ix-thumb"{' style="--ox:50%"' if x in (1, 45) else ''}><img alt="" data-src="img/{x:02d}.webp" width="2400" height="849"></span>
         <span class="ix-text"><span class="ix-num">{rng}</span><span class="ix-title">{esc(b)}</span><span class="ix-sub">{esc(s)}</span></span>
       </button></li>''')

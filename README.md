@@ -14,11 +14,17 @@ connect the repo in Netlify; no build command, publish directory `.`.)
 - `_edit/` — only needed if you change page titles or chapters (see below)
 
 ## How it behaves
-- Desktop: scroll through the pages; click any page to open the magnifier, click again to close.
-  `+` / `−` (or Shift + scroll) change the zoom. Arrow keys go page by page. "Index" jumps to a project.
-- Phones held upright: each page fills the screen height — swipe sideways to read it,
-  press and hold anywhere to magnify.
-- No entrance animations — every page is a plain image, loaded as you approach it.
+- Pages sit as cards with space around and between them.
+- Loading screen: the name writes itself in letter by letter, then the screen splits open onto the cover.
+- Scrolling (mouse/trackpad) is smoothed; arrow keys, the ‹ › buttons and the right-hand rail glide to land each page centred.
+- Every page gently zooms as it reaches the middle of the screen; project title pages drift slightly slower (parallax).
+- Entering a new project flashes its name in the middle of the screen for a moment.
+- Magnifier: click a page, then scroll to zoom in/out (or `+` / `−`); click again to close. The lens wobbles as it moves.
+  On phones: press and hold a page.
+- The cursor ring labels what you're over (Zoom, Open, Copy…) and snaps onto buttons.
+- Index: project thumbnails tilt in 3D under the mouse.
+- Thank-you page: the email and Behance lines underline themselves and a "Back to top" button rises in.
+- Motion is switched off for visitors who have "reduce motion" turned on. No animation ever hides a page.
 - Each page has its own link, e.g. `/#p12` opens Fables of Mithila.
 
 ## Updating
