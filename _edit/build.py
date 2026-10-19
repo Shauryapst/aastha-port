@@ -76,6 +76,9 @@ def fx_for(n):
     return cycle[(n - c[3] - 1) % len(cycle)]
 
 esc = html.escape
+import sys
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from scenes_def import AFTER, scene_html, scene_data
 sections = []
 for n in range(1, 46):
     c = chapter_of(n)
@@ -98,6 +101,8 @@ f'''  <section class="pg{" ch-start" if n == c[3] else ""}" id="p{n}" data-i="{n
       <img src="img/{n:02d}.webp" srcset="img/{n:02d}.webp 2400w, img/xl/{n:02d}.webp 4200w" sizes="(max-aspect-ratio: 1/1) 260vh, 92vw" data-n="{n}" width="2400" height="849" alt="{esc(c[1])} — {esc(title)}"{' fetchpriority="high"' if n == 1 else ''}{'' if eager else ' loading="lazy"'} decoding="async" draggable="false">{hots}
     </div></div>
   </section>''')
+    if n in AFTER:
+        sections.append(scene_html(AFTER[n]))
 
 data = {
     "pages": PAGES,
@@ -125,6 +130,7 @@ out = (tpl.replace("{{NAME}}", esc(NAME))
           .replace("{{SECTIONS}}", "\n".join(sections))
           .replace("{{TICKS}}", "\n    ".join(ticks))
           .replace("{{INDEX}}", "\n".join(index_items))
-          .replace("{{DATA}}", json.dumps(data, ensure_ascii=False)))
+          .replace("{{DATA}}", json.dumps(data, ensure_ascii=False))
+          .replace("{{SCENEDATA}}", scene_data()))
 pathlib.Path(__file__).resolve().parent.parent.joinpath("index.html").write_text(out)
 print("index.html written:", len(out), "bytes")

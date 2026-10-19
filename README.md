@@ -27,6 +27,15 @@ connect the repo in Netlify; no build command, publish directory `.`.)
 - Motion is switched off for visitors who have "reduce motion" turned on. No animation ever hides a page.
 - Each page has its own link, e.g. `/#p12` opens Fables of Mithila.
 
+## Process scenes (scroll-driven)
+Between pages, six pinned "studio" scenes play as you scroll (forwards and backwards):
+- **Unbuilt — moodboard:** collage pieces slide in at different speeds, the Pantone TCX board fills in, keywords, then the concept note.
+- **Fables of Mithila — sketch to garment:** the flat sketch draws itself, colour and print fill the silhouette, the coordinates appear.
+- **Saandra / Seed Scriptures — motif to print:** one motif (Seed starts from the ink sketch) duplicates, rotates into a half-drop repeat, the repeat unit is marked, then the final print arrives as a swatch.
+- **Roundup / Kargha — weave formation:** warp drops onto the loom, the weft travels over and under, the pattern appears, then the cloth turns into the finished product.
+Pressing → / ↓ on a title page glides through its scene. Assets are cut from the pages by `_edit/scenes/assets.py`;
+scene text and timings live in `_edit/scenes_def.py`; the animation code is `scenes.js`.
+
 ## Updating
 - **Changed a page in Canva?** Download it as PNG and replace `img/NN.webp` and `img/xl/NN.webp`
   (2400 px and 4200 px wide, WebP). Or ask Claude to redo the conversion.
