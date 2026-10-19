@@ -1,0 +1,8 @@
+# Plain static site — no build step. Drag this folder onto https://app.netlify.com/drop
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
